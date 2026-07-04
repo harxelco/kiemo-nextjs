@@ -120,7 +120,7 @@ export function CheckoutModal() {
           pickupMethod: savedOrder.pickup_method,
           deliveryArea: savedOrder.delivery_area,
         });
-        window.open(whatsappContactUrl(waMessage), "_blank", "noopener");
+       window.location.href = whatsappContactUrl(waMessage);
         setStatus("success");
       }
     } catch {
