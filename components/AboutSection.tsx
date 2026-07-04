@@ -26,7 +26,7 @@ export function AboutSection() {
               <span className="astat-l">Est. Year</span>
             </div>
             <div className="about-stat-item">
-              <span className="astat-n">15.6K</span>
+              <span className="astat-n">15.6K +</span>
               <span className="astat-l">Followers</span>
             </div>
             <div className="about-stat-item">
@@ -44,16 +44,23 @@ export function AboutSection() {
             Visit the Flagship Store →
           </a>
         </div>
-        <div className="about-img-wrap" data-reveal>
-          <Image
-            src={STORE_IMG}
-            alt="Kiemo Nairobi Flagship Store"
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            style={{ objectFit: "cover" }}
-            loading="lazy"
-          />
-        </div>
+        <div className="about-text">
+  ...
+</div>
+
+<div className="about-img-full" data-reveal>
+  <Image
+    src={STORE_IMG}
+    alt="Kiemo Nairobi Flagship Store"
+    fill
+    sizes="100vw"
+    style={{
+      objectFit: "cover",
+      objectPosition: "center",
+    }}
+    loading="lazy"
+  />
+</div>
       </div>
       <div className="values-row">
         <div className="value-item" data-reveal>
