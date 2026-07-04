@@ -1,4 +1,3 @@
-import { Providers } from "@/components/Providers";
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
@@ -66,9 +65,7 @@ export default function RootLayout({
       lang="en"
       className={`${bodoniModa.variable} ${cormorant.variable} ${dmSans.variable}`}
     >
-      <body>
-  <Providers>{children}</Providers>
-</body>
+   <body>{children}</body>
     </html>
   );
 }
