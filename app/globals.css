@@ -1262,7 +1262,7 @@ ul { list-style: none; }
 }
 .about-grid {
   display: grid;
-  grid-template-columns: 2fr 3fr;
+  grid-template-columns: 3fr 2fr;
   gap: 72px;
   align-items: center;
   margin-bottom: 72px;
@@ -3045,19 +3045,6 @@ ul { list-style: none; }
 }
 .checkout-submit-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-gold); }
 .checkout-submit-btn:disabled { opacity: 0.6; pointer-events: none; }
-
-.checkout-whatsapp-btn {
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--border);
-  box-shadow: none;
-}
-.checkout-whatsapp-btn:hover {
-  border-color: var(--gold-line);
-  color: var(--gold);
-  box-shadow: none;
-  transform: none;
-}
 
 .checkout-api-error {
   background: rgba(139,58,58,0.08);
