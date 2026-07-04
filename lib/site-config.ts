@@ -20,6 +20,46 @@ export function whatsappContactUrl(message: string): string {
   return `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
 
+// Builds the pre-filled WhatsApp message for an order placed via the
+// "Order via WhatsApp" checkout button. The order is saved to Supabase
+// first (see CheckoutModal/api/orders), then this message is opened so
+// the shop and customer can confirm availability directly.
+export function buildWhatsAppOrderMessage(params: {
+  orderRef: string;
+  fullName: string;
+  phone: string;
+  items: { name: string; size: string | null; qty: number; price: number }[];
+  subtotal: number;
+  pickupMethod: "pickup" | "delivery";
+  deliveryArea: string | null;
+}): string {
+  const { orderRef, fullName, phone, items, subtotal, pickupMethod, deliveryArea } = params;
+
+  const itemLines = items
+    .map((i) => `- ${i.name}${i.size ? ` (${i.size})` : ""} x${i.qty} — KSh ${(i.price * i.qty).toLocaleString("en-KE")}`)
+    .join("\n");
+
+  const fulfilment =
+    pickupMethod === "delivery"
+      ? `Delivery to: ${deliveryArea ?? "Nairobi"}`
+      : "Pickup at shop: Kimathi Street";
+
+  return [
+    `Hello Kiemo! I'd like to place an order (Ref: ${orderRef}).`,
+    "",
+    `Name: ${fullName}`,
+    `Phone: ${phone}`,
+    "",
+    "Items:",
+    itemLines,
+    "",
+    `Total: KSh ${subtotal.toLocaleString("en-KE")}`,
+    fulfilment,
+    "",
+    "Please confirm availability.",
+  ].join("\n");
+}
+
 // Delivery is restricted to Nairobi per Part 3 of the brief. This list
 // drives the delivery-area <select> in the checkout modal; "Other Nairobi
 // Area" covers anywhere not explicitly listed while keeping the hard

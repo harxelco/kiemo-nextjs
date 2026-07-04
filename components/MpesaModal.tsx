@@ -2,19 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useMpesa } from "@/hooks/MpesaContext";
-import { useCart } from "@/hooks/CartContext";
 import { formatPrice } from "@/lib/format";
 
 type Step = 1 | 2 | 3;
 
 export function MpesaModal() {
   const mpesa = useMpesa();
-  const cart = useCart();
   const [step, setStep] = useState<Step>(1);
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [refNum, setRefNum] = useState("");
   const progressInterval = useRef<ReturnType<typeof setInterval> | null>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
 
@@ -22,7 +19,9 @@ export function MpesaModal() {
     if (mpesa.isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- reset tied to an external open/close signal; modal stays mounted for its CSS fade transition, so a key-remount isn't an option here.
       setStep(1);
-      setPhone("");
+      // Pre-fill from the phone number already entered in checkout. Strip
+      // a leading 254/0 so it matches this input's "7XX XXX XXX" format.
+      setPhone(mpesa.phone.replace(/\s/g, "").replace(/^(?:\+?254|0)/, ""));
       setPhoneError(false);
       setProgress(0);
       document.body.style.overflow = "hidden";
@@ -31,7 +30,7 @@ export function MpesaModal() {
     } else {
       document.body.style.overflow = "";
     }
-  }, [mpesa.isOpen]);
+  }, [mpesa.isOpen, mpesa.phone]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -58,12 +57,19 @@ export function MpesaModal() {
       }
     }, 48);
 
+    // --- Daraja integration point ---
+    // This setTimeout simulates "customer entered PIN, STK confirmed."
+    // Swap this block for a real call: POST to your /api/mpesa/stk-push
+    // route (orderRef = mpesa.orderRef, phone, amount = mpesa.amount),
+    // then poll/subscribe for the callback result before advancing to
+    // step 3. Keep the progress bar as a visual placeholder for "waiting
+    // on the Daraja callback" — just drive `setStep(3)` from the real
+    // callback result instead of a fixed timeout.
     setTimeout(() => {
       if (progressInterval.current) clearInterval(progressInterval.current);
       setProgress(100);
       setTimeout(() => {
         setStep(3);
-        setRefNum(String(Math.floor(Math.random() * 9_000_000 + 1_000_000)));
       }, 300);
     }, 2600);
   }
@@ -80,8 +86,7 @@ export function MpesaModal() {
 
   function handleDone() {
     mpesa.close();
-    cart.closeCart();
-    cart.clearCart();
+    mpesa.onSuccess?.();
   }
 
   return (
@@ -157,7 +162,7 @@ export function MpesaModal() {
             <p className="mpesa-sub">
               Your order has been confirmed. We&apos;ll reach out on WhatsApp shortly to arrange delivery.
             </p>
-            <div className="mpesa-ref">Ref: KMW-<span id="mpesa-ref-num">{refNum}</span></div>
+            <div className="mpesa-ref">Ref: {mpesa.orderRef}</div>
             <button id="mpesa-done-btn" className="mpesa-pay-btn" onClick={handleDone}>
               Done
             </button>

@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useCheckout } from "@/hooks/CheckoutContext";
+import { useMpesa } from "@/hooks/MpesaContext";
 import { formatPrice } from "@/lib/format";
-import { NAIROBI_DELIVERY_AREAS, whatsappContactUrl } from "@/lib/site-config";
-import type { Order, PickupMethod } from "@/types/order";
+import { NAIROBI_DELIVERY_AREAS, buildWhatsAppOrderMessage, whatsappContactUrl } from "@/lib/site-config";
+import type { Order, PickupMethod, PaymentMethod } from "@/types/order";
 
 type Status = "form" | "submitting" | "success" | "error";
 
 export function CheckoutModal() {
   const checkout = useCheckout();
+  const mpesa = useMpesa();
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -19,6 +21,9 @@ export function CheckoutModal() {
   const [errorMsg, setErrorMsg] = useState("");
   const [errorFallback, setErrorFallback] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
+  // Tracks which button was clicked so we know, after the shared save,
+  // whether to open the M-Pesa STK modal or redirect to WhatsApp.
+  const [pendingMethod, setPendingMethod] = useState<PaymentMethod | null>(null);
 
   const subtotal = checkout.items.reduce((s, i) => s + i.price * i.qty, 0);
 
@@ -37,6 +42,7 @@ export function CheckoutModal() {
       setErrorMsg("");
       setErrorFallback(false);
       setOrder(null);
+      setPendingMethod(null);
     }
   }, [checkout.isOpen]);
 
@@ -59,9 +65,9 @@ export function CheckoutModal() {
   const deliveryValid = pickupMethod === "pickup" || deliveryArea !== "";
   const canSubmit = nameValid && phoneValid && deliveryValid && checkout.items.length > 0;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(method: PaymentMethod) {
     if (!canSubmit) return;
+    setPendingMethod(method);
     setStatus("submitting");
     setErrorMsg("");
     setErrorFallback(false);
@@ -76,6 +82,7 @@ export function CheckoutModal() {
           pickup_method: pickupMethod,
           delivery_area: pickupMethod === "delivery" ? deliveryArea : null,
           items: checkout.items,
+          payment_method: method,
         }),
       });
       const data = await res.json();
@@ -87,8 +94,35 @@ export function CheckoutModal() {
         return;
       }
 
-      setOrder(data.order as Order);
-      setStatus("success");
+      const savedOrder = data.order as Order;
+      setOrder(savedOrder);
+
+      if (method === "mpesa") {
+        // Order is saved — hand off to the M-Pesa STK modal. Checkout
+        // itself shows the success screen once the M-Pesa modal reports
+        // success (see onSuccess below), so the customer isn't shown two
+        // separate "success" screens back to back.
+        mpesa.open({
+          amount: savedOrder.subtotal,
+          phone: savedOrder.phone,
+          orderRef: savedOrder.order_ref,
+          onSuccess: () => setStatus("success"),
+        });
+        setStatus("form");
+      } else {
+        // WhatsApp path: order is already saved, now redirect immediately.
+        const waMessage = buildWhatsAppOrderMessage({
+          orderRef: savedOrder.order_ref,
+          fullName: savedOrder.full_name,
+          phone: savedOrder.phone,
+          items: savedOrder.items,
+          subtotal: savedOrder.subtotal,
+          pickupMethod: savedOrder.pickup_method,
+          deliveryArea: savedOrder.delivery_area,
+        });
+        window.open(whatsappContactUrl(waMessage), "_blank", "noopener");
+        setStatus("success");
+      }
     } catch {
       setErrorMsg("Network error — please check your connection and try again.");
       setStatus("error");
@@ -126,11 +160,17 @@ export function CheckoutModal() {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <div className="checkout-title" style={{ textAlign: "center" }}>Order Received</div>
+            <div className="checkout-title" style={{ textAlign: "center" }}>
+              {order.payment_method === "whatsapp" ? "Order Sent" : "Order Received"}
+            </div>
             <p className="checkout-sub" style={{ textAlign: "center" }}>
-              Thank you, {order.full_name.split(" ")[0]}. We&apos;ll contact you on{" "}
-              {order.phone} shortly to confirm{" "}
-              {order.pickup_method === "delivery" ? "delivery" : "pickup"}.
+              {order.payment_method === "whatsapp" ? (
+                <>Thank you, {order.full_name.split(" ")[0]}. We&apos;ve opened WhatsApp so you can confirm availability with us directly.</>
+              ) : (
+                <>Thank you, {order.full_name.split(" ")[0]}. We&apos;ll contact you on{" "}
+                {order.phone} shortly to confirm{" "}
+                {order.pickup_method === "delivery" ? "delivery" : "pickup"}.</>
+              )}
             </p>
             <div className="checkout-ref">Order Ref: {order.order_ref}</div>
             <div className="checkout-summary">
@@ -195,7 +235,7 @@ export function CheckoutModal() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
               <div className="checkout-field">
                 <label htmlFor="checkout-name">Full Name</label>
                 <input
@@ -269,11 +309,25 @@ export function CheckoutModal() {
               )}
 
               <button
-                type="submit"
+                type="button"
                 className="checkout-submit-btn"
                 disabled={!canSubmit || status === "submitting"}
+                onClick={() => handleSubmit("mpesa")}
               >
-                {status === "submitting" ? "Placing Order…" : "Place Order"}
+                {status === "submitting" && pendingMethod === "mpesa"
+                  ? "Placing Order…"
+                  : "Pay with M-Pesa"}
+              </button>
+
+              <button
+                type="button"
+                className="checkout-submit-btn checkout-whatsapp-btn"
+                disabled={!canSubmit || status === "submitting"}
+                onClick={() => handleSubmit("whatsapp")}
+              >
+                {status === "submitting" && pendingMethod === "whatsapp"
+                  ? "Placing Order…"
+                  : "Order via WhatsApp"}
               </button>
             </form>
           </>

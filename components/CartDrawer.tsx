@@ -4,13 +4,11 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { useCart } from "@/hooks/CartContext";
 import { useCheckout } from "@/hooks/CheckoutContext";
-import { useMpesa } from "@/hooks/MpesaContext";
 import { formatPrice } from "@/lib/format";
 
 export function CartDrawer() {
   const cart = useCart();
   const checkout = useCheckout();
-  const mpesa = useMpesa();
 
   useEffect(() => {
     document.body.style.overflow = cart.isCartOpen ? "hidden" : "";
@@ -140,17 +138,6 @@ export function CartDrawer() {
                   <line x1="3" y1="6" x2="21" y2="6" />
                 </svg>
                 Checkout
-              </button>
-              <button
-                id="cart-mpesa-btn"
-                className="cart-mpesa-btn"
-                onClick={() => mpesa.open(cart.cartTotal)}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <rect x="2" y="5" width="20" height="14" rx="2" />
-                  <line x1="2" y1="10" x2="22" y2="10" />
-                </svg>
-                Pay via M-Pesa
               </button>
             </div>
           </div>

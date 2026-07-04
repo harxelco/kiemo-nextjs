@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
   const pickup_method = body.pickup_method === "delivery" ? "delivery" : "pickup";
   const delivery_area = clean(body.delivery_area, 60);
   const items = Array.isArray(body.items) ? body.items : [];
+  const payment_method = body.payment_method === "mpesa" ? "mpesa" : "whatsapp";
 
   if (full_name.length < 2) {
     return badRequest("Please enter your full name.");
@@ -108,6 +109,7 @@ export async function POST(req: NextRequest) {
     items,
     subtotal,
     status: "new",
+    payment_method,
   };
 
   const supabase = getSupabaseServerClient();

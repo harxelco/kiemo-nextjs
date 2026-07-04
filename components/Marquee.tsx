@@ -6,7 +6,7 @@ const MARQUEE_ITEMS = [
   "Lyric House · Kimathi Street",
   "Easy Checkout",
   "Est. 2018",
-  "Free Delivery",
+  "Delivery Available",
   "Blazers · Shirts · Trousers",
   "M-Pesa Accepted",
   "New Arrivals",

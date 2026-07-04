@@ -1,4 +1,5 @@
 export type PickupMethod = "pickup" | "delivery";
+export type PaymentMethod = "mpesa" | "whatsapp";
 
 export interface OrderLineItem {
   product_id: number;
@@ -15,6 +16,7 @@ export interface OrderRequestBody {
   pickup_method: PickupMethod;
   delivery_area: string | null;
   items: OrderLineItem[];
+  payment_method: PaymentMethod;
 }
 
 // A row in the Supabase `orders` table (see supabase/migrations/0001_phase1_orders.sql)
@@ -29,4 +31,5 @@ export interface Order {
   items: OrderLineItem[];
   subtotal: number;
   status: "new" | "confirmed" | "fulfilled" | "cancelled";
+  payment_method: PaymentMethod;
 }

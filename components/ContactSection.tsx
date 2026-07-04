@@ -2,7 +2,7 @@ import Image from "next/image";
 import { SITE_CONFIG, whatsappContactUrl } from "@/lib/site-config";
 
 const STORE_IMG =
-  "https://res.cloudinary.com/dtsixdjix/image/upload/v1782896960/Kiemo_website_footer_section_ziabid.png";
+  "https://res.cloudinary.com/dtsixdjix/image/upload/v1782900075/ChatGPT_Image_Jul_1_2026_01_00_48_PM_wupnou.png";
 
 export function ContactSection() {
   return (
