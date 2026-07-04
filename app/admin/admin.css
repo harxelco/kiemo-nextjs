@@ -1,0 +1,203 @@
+/* Admin UI — deliberately its own stylesheet, not an addition to
+   globals.css. The storefront's CSS is a preserved legacy asset; the
+   admin area is genuinely new surface with its own (simpler) layout
+   needs. Shares the same design tokens (--gold, --ink, --font-ui, etc.)
+   from globals.css for brand consistency, since both stylesheets load
+   together on /admin routes. */
+
+.admin-login-wrap {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--noir, #1a1714);
+  padding: 20px;
+}
+.admin-login-card {
+  background: var(--parchment, #f7f3ed);
+  border-radius: 12px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+.admin-login-title {
+  font-family: var(--font-display, serif);
+  font-size: 26px;
+  color: var(--ink, #1a1714);
+  margin-bottom: 4px;
+}
+.admin-login-sub {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 13px;
+  color: var(--ink-3, #8a8378);
+  margin-bottom: 24px;
+}
+.admin-field {
+  display: block;
+  margin-bottom: 16px;
+  font-family: var(--font-ui, sans-serif);
+}
+.admin-field span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3, #8a8378);
+  margin-bottom: 8px;
+}
+.admin-field input {
+  width: 100%;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #e0dad0);
+  border-radius: 6px;
+  outline: none;
+}
+.admin-field input:focus {
+  border-color: var(--gold-line, #b8935f);
+}
+.admin-login-error {
+  background: rgba(139, 58, 58, 0.08);
+  border: 1px solid rgba(139, 58, 58, 0.25);
+  color: #8b3a3a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 12.5px;
+  margin-bottom: 16px;
+}
+.admin-login-note {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 11px;
+  color: var(--ink-3, #8a8378);
+  margin-top: 18px;
+  line-height: 1.6;
+}
+.admin-login-note code {
+  background: var(--parchment-2, #efe9df);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10.5px;
+}
+
+.admin-shell {
+  min-height: 100svh;
+  background: var(--parchment-2, #efe9df);
+  font-family: var(--font-ui, sans-serif);
+}
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: var(--noir, #1a1714);
+  color: var(--parchment, #f7f3ed);
+}
+.admin-topbar-title {
+  font-family: var(--font-display, serif);
+  font-size: 18px;
+}
+.admin-topbar-title span {
+  color: var(--gold, #b8935f);
+}
+.admin-signout-btn {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--parchment, #f7f3ed);
+  border: 1px solid rgba(247, 243, 237, 0.3);
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.2s;
+}
+.admin-signout-btn:hover { background: rgba(247, 243, 237, 0.1); }
+
+.admin-main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+.admin-page-title {
+  font-family: var(--font-display, serif);
+  font-size: 24px;
+  color: var(--ink, #1a1714);
+  margin-bottom: 6px;
+}
+.admin-page-sub {
+  font-size: 13px;
+  color: var(--ink-3, #8a8378);
+  margin-bottom: 28px;
+}
+
+.admin-empty-state {
+  background: var(--parchment, #f7f3ed);
+  border: 1px dashed var(--border, #e0dad0);
+  border-radius: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ink-3, #8a8378);
+  font-size: 13.5px;
+}
+
+.admin-review-card {
+  background: var(--parchment, #f7f3ed);
+  border: 1px solid var(--border, #e0dad0);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.admin-review-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.admin-review-name {
+  font-weight: 600;
+  color: var(--ink, #1a1714);
+  font-size: 14.5px;
+}
+.admin-review-date {
+  font-size: 11px;
+  color: var(--ink-3, #8a8378);
+  margin-top: 2px;
+}
+.admin-review-stars {
+  color: var(--gold, #b8935f);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.admin-review-message {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-2, #3d3833);
+  margin-bottom: 16px;
+}
+.admin-review-actions {
+  display: flex;
+  gap: 10px;
+}
+.admin-approve-btn,
+.admin-reject-btn {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.admin-approve-btn { background: #2e6b4f; color: white; }
+.admin-reject-btn { background: transparent; color: #8b3a3a; border: 1px solid rgba(139,58,58,0.35); }
+.admin-approve-btn:hover, .admin-reject-btn:hover { opacity: 0.85; }
+.admin-approve-btn:active, .admin-reject-btn:active { transform: scale(0.97); }
+.admin-approve-btn:disabled, .admin-reject-btn:disabled { opacity: 0.5; pointer-events: none; }
