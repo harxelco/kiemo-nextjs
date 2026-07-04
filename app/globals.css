@@ -1262,7 +1262,7 @@ ul { list-style: none; }
 }
 .about-grid {
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 3fr;
   gap: 72px;
   align-items: center;
   margin-bottom: 72px;
@@ -1514,7 +1514,7 @@ ul { list-style: none; }
 #contact { background: var(--parchment-2); }
 .contact-grid {
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 3fr;
   min-height: 600px;
 }
 .contact-left {
